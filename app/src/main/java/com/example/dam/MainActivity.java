@@ -2,75 +2,87 @@ package com.example.dam;
 
 import android.os.Bundle;
 
-import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.dam.databinding.ActivityMainBinding;
-
-import android.view.Menu;
-import android.view.MenuItem;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+    private FloatingActionButton centerButton;
+    private FloatingActionButton outlineButton;
+    private RelativeLayout layout;
+    private TextView piValueTextView;
 
-    private AppBarConfiguration appBarConfiguration;
-    private ActivityMainBinding binding;
+    private boolean initialized = false;
+    private float centerX, centerY, touchX, touchY;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        layout = findViewById(R.id.relativeLayout);
+        // text = findViewById(R.id.text);
+        centerButton = findViewById(R.id.centerButton);
+        outlineButton = findViewById(R.id.outlineButton);
+        piValueTextView = findViewById(R.id.piValueTextView);
 
-        setSupportActionBar(binding.toolbar);
+        // final Handler h = new Handler();
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        // setTitle("Sleep Timer");
+        // layout.setOnTouchListener(handleTouch);
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
+        centerButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onClick(View v)
+            {
+//                setTimer(30);
             }
         });
+
+        /*h.postDelayed(new Runnable()
+        {
+            public void run()
+            {
+                updateUI();
+
+                h.postDelayed(this, 50);
+            }
+        }, 100);*/
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    public void onWindowFocusChanged(boolean hasFocus)
+    {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus)
+        {
+//            updateValues();
+            initialize();
+            layout.requestFocus();
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
+    private void initialize()
+    {
+        if (!initialized)
+        {
+            centerX = centerButton.getX() + centerButton.getWidth()  / 2;
+            centerY = centerButton.getY() + centerButton.getHeight() / 2;
+
+            outlineButton.setX(centerX + centerButton.getWidth() / 2 - outlineButton.getWidth() / 2);
+            outlineButton.setY(centerY - outlineButton.getHeight() / 2);
+
+            piValueTextView.setX(10);
+            piValueTextView.setY(10);
+
+            initialized = true;
+        }
     }
 }
