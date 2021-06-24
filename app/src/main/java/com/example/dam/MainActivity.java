@@ -1,5 +1,6 @@
 package com.example.dam;
 
+import android.graphics.Point;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -18,9 +19,11 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton outlineButton;
     private RelativeLayout layout;
     private TextView piValueTextView;
+    private Point plottedButton;
 
     private boolean initialized = false;
-    private float centerX, centerY, touchX, touchY, piValue;
+    private float centerX, centerY, touchX, touchY;
+    private double piValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -43,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                piValueTextView.setText(Float.toString(centerX));
 //                setTimer(30);
             }
         });
@@ -78,9 +80,6 @@ public class MainActivity extends AppCompatActivity {
             centerX = centerButton.getX() + centerButton.getWidth()  / 2;
             centerY = centerButton.getY() + centerButton.getHeight() / 2;
 
-            outlineButton.setX(centerX + centerButton.getWidth() / 2 - outlineButton.getWidth() / 2);
-            outlineButton.setY(centerY - outlineButton.getHeight() / 2);
-
             piValueTextView.setX(10);
             piValueTextView.setY(10);
 
@@ -100,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
                     {
                         runOnUiThread(() -> {
                             moveOutlineButton();
-                            piValueTextView.setText(Float.toString(touchX));
                         });
                         Thread.sleep(100);
                     }
@@ -124,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_MOVE:
                     touchX = e.getX();
                     touchY = e.getY();
+                    piValue = CircleFunctions.pointsToAngle(centerX, centerY, touchX, touchY);
                     break;
                 case MotionEvent.ACTION_UP:
                     break;
@@ -135,6 +134,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void moveOutlineButton()
     {
+//        piValueTextView.setText(Double.toString(-piValue) + " rad");
+        piValueTextView.setText("Rads\n" + String.format("%.02f", -piValue));
 
+        plottedButton = CircleFunctions.getPointOnCircle(centerX, centerY, piValue, centerButton.getWidth() / 2);
+
+        outlineButton.setX(plottedButton.x - outlineButton.getWidth() / 2);
+        outlineButton.setY(plottedButton.y - outlineButton.getHeight() / 2);
     }
 }
